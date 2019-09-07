@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			.img1 {
+				width: 800px;
+				display: block;
+			}
+
+			.imgbox {
+				/* 相对与上一个盒子的移动 */
+				position: absolute;
+				
+				/* 这个东西是调整常驻图片的位置 */
+				top: 200px;
+				left: 200px;
+			}
+
+			.moveBox {
+				position: absolute;
+				display: none;
+
+
+				/* 这个东西是调整放大框的大小(可调) */
+				width: 100px;
+				height: 100px;
+				background-color: rgba(244, 100, 20, 0.3);
+			}
+
+			.moveBox2 {
+				position: absolute;
+				overflow: hidden;
+				display: none;
+
+				/* 这个类的作用是调整防大框的位置(可调) */
+				left: 900px;
+				top: 200px;
+				background-color: rgba(244, 155, 20, 0.6);
+
+			}
+
+			.moveBox2>img {
+				position: absolute;
+			}
+
+			.middle {
+				/* 这个类可以去掉测试间隔所用的类 */
+				position: relative;
+				margin-left: 100px;
+			}
+
+			.hiddenIN {
+				width: 0px;
+				height: 0px;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- 这个盒子可以自行去掉 -->
+		<div class="middle">
+
+			<div class="imgbox">
+				<!-- 图片也可以换但是要更改 -->
+				<img src="img/backGroundImageLong.jpg" alt="" class="img1">
+				<div class="moveBox">
+				</div>
+			</div>
+
+
+
+			<div class="moveBox2">
+				<img src="img/backGroundImageLong.jpg">
+			</div>
+
+		</div>
+
+		<div class="hiddenIN">
+
+		</div>
+
+		<script type="text/javascript">
+			// 图片width像数值1920
+			var pictureWidth = 1920;
+			// 这两个参数包含imgbox 外部的margin-top top padding 所有影响到这个盒子位置的移动总和
+			var outerSizeLeft = 100;
+			var outerSizeTop = 0;
+			var imgSrc = "http://www.xxgalgame.com/upload/2019-09-02_2110551567430085449.jpg";
+			// "img/backGroundImageLong.jpg"
+			// "https://www.lianaiyx.com/d/file/GalGame/2019-09-02/b29040eed124858fc5e696922d3cb8e9.jpg"
+
+			var imgBg = new Image();
+			imgBg.src = imgSrc;
+			var hiddenIN = document.querySelector(".hiddenIN");
+			hiddenIN.appendChild(imgBg);
+
+			// 图片加载以后才会出现放大镜效果
+			imgBg.onload = function() {
+				// console.log(getComputedStyle(imgBg).width)
+				var pictureWidth = imgBg.clientWidth;
+
+				var img1 = document.querySelector(".img1")
+				var imgbox1 = document.querySelector(".imgbox");
+				var moveBox = document.querySelector(".moveBox");
+				var bigImg = document.querySelector(".moveBox2>img");
+				var moveBox2 = document.querySelector(".moveBox2");
+
+				img1.src = imgSrc;
+				bigImg.src = imgSrc;
+
+				moveBox2.style.width = parseFloat(getComputedStyle(moveBox).width) * pictureWidth / img1.clientWidth + 'px';
+				moveBox2.style.height = parseFloat(getComputedStyle(moveBox).width) * pictureWidth / img1.clientWidth + 'px';
+
+
+				imgbox1.onmouseenter = function(e) {
+					moveBox.style.display = "block";
+					moveBox2.style.display = "block";
+				}
+
+				imgbox1.onmouseleave = function(e) {
+					moveBox.style.display = 'none';
+					moveBox2.style.display = "none";
+				}
+
+				imgbox1.onmousemove = function(e) {
+					var imgWidth = imgbox1.clientWidth;
+					var imgHeight = imgbox1.clientHeight;
+
+					var leftTemp = e.pageX - imgbox1.offsetLeft - moveBox.clientWidth / 2 - outerSizeLeft;
+					var topTemp = e.pageY - imgbox1.offsetTop - moveBox.clientHeight / 2 - outerSizeTop;
+
+					moveBox.style.left = leftTemp + 'px';
+					moveBox.style.top = topTemp + 'px';
+					if (leftTemp < 0) {
+						moveBox.style.left = '0px';
+					}
+
+					if (topTemp < 0) {
+						moveBox.style.top = '0px';
+					}
+
+					if (leftTemp > (imgbox1.clientWidth - moveBox.clientWidth)) {
+						moveBox.style.left = imgbox1.clientWidth - moveBox.clientWidth + 'px';
+					}
+
+					if (topTemp > (imgbox1.clientHeight - moveBox.clientHeight)) {
+						moveBox.style.top = imgbox1.clientHeight - moveBox.clientHeight + 'px';
+					}
+
+					bigImg.style.left = -parseFloat(moveBox.style.left) * (pictureWidth / img1.clientWidth) + 'px';
+					bigImg.style.top = -parseFloat(moveBox.style.top) * (pictureWidth / img1.clientWidth) + 'px';
+				}
+			}
+		</script>
+	</body>
+</html>
